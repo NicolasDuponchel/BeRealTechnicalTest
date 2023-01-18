@@ -13,7 +13,7 @@ REST API to navigate a hierarchy of folders.
 Server is available at http://163.172.147.216:8080
 
 The goal is to:
-- [ ] connect to the server
+- [X] connect to the server
 - [ ] navigate file hierarchy
 - [ ] display a fullscreen image
 
