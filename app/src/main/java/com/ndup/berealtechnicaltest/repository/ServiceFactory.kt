@@ -14,7 +14,7 @@ import retrofit2.Retrofit
 @OptIn(ExperimentalSerializationApi::class)
 object ServiceFactory {
 
-    private const val BaseUrl = "http://163.172.147.216:8080"
+    private const val BaseUrl = "http://163.172.147.216:8080/"
     private const val DebugUserName = "noel"
     private const val DebugUserPassword = "foobar"
 
