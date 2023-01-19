@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() {
             currentPath.lastOrNull()
                 ?.takeUnless { it.isDir }
                 ?.let { FullScreenImage(item = it) }
-                ?: ItemGrid(items, Modifier.fillMaxHeight(), 1) { mainListener.onItemSelected(it) }
+                ?: ItemGrid(items, Modifier.fillMaxHeight(), 3) { mainListener.onItemSelected(it) }
         }
     }
 
