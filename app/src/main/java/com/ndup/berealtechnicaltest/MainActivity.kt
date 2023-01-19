@@ -35,6 +35,7 @@ import com.ndup.berealtechnicaltest.domain.Items
 import com.ndup.berealtechnicaltest.domain.User
 import com.ndup.berealtechnicaltest.presentation.IMainListener
 import com.ndup.berealtechnicaltest.presentation.MainViewModel
+import com.ndup.berealtechnicaltest.ui.ErrorLayout
 import com.ndup.berealtechnicaltest.ui.LoggingLayout
 import com.ndup.berealtechnicaltest.ui.FullScreenImage
 import com.ndup.berealtechnicaltest.ui.ItemGrid
@@ -58,6 +59,10 @@ class MainActivity : AppCompatActivity() {
         setContent {
             with(mainListener.getModelAsState().value) {
                 println(currentUser)
+                error?.let {
+                    ErrorLayout(it) { mainListener.onErrorDismissed() }
+                    return@setContent
+                }
                 currentUser
                     ?.let {
                         ActivityMainLayout(

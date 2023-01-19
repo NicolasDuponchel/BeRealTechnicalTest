@@ -8,8 +8,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.ndup.berealtechnicaltest.domain.Failure
 import com.ndup.berealtechnicaltest.domain.Item
 import com.ndup.berealtechnicaltest.domain.Items
+import com.ndup.berealtechnicaltest.domain.Success
 import com.ndup.berealtechnicaltest.domain.User
 import com.ndup.berealtechnicaltest.logging.ApiModelObject
 import com.ndup.berealtechnicaltest.repository.IRepository
@@ -21,6 +23,7 @@ data class MainModel(
     val currentUser: User?,
     val currentPath: List<Item>,
     val items: Items,
+    val error: Throwable? = null,
 )
 
 interface IMainListener {
@@ -32,6 +35,7 @@ interface IMainListener {
     fun insertNewFolder(folderName: String)
     fun onItemDeletionRequest(item: Item)
     fun onLoggingRequest(name: String, password: String)
+    fun onErrorDismissed()
 }
 
 class MainViewModel @AssistedInject constructor(
@@ -82,16 +86,18 @@ class MainViewModel @AssistedInject constructor(
 
     override fun onItemSelected(item: Item) {
         viewModelScope.launch {
-            val folderContent = repository.getFolderContent(item.id)
-            mutableModel.updateModel(
-                items = folderContent,
-                currentPath = mutableModel.nonNullValue.currentPath.plus(item).toSet().toList()
-            )
+            when (val result = repository.getFolderContent(item.id)) {
+                is Failure -> mutableModel.postValue(mutableModel.nonNullValue.copy(error = result.error))
+                is Success -> mutableModel.updateModel(
+                    items = result.value,
+                    currentPath = mutableModel.nonNullValue.currentPath.plus(item).toSet().toList()
+                )
+            }
         }
     }
 
     override fun onBack(): Boolean {
-        val currentModel = mutableModel.value!!
+        val currentModel = mutableModel.nonNullValue
         if (currentModel.currentPath.isEmpty()) return false
 
         val newPath = currentModel.currentPath.dropLast(1)
@@ -99,13 +105,15 @@ class MainViewModel @AssistedInject constructor(
         newPath.lastOrNull()
             ?.let { previousItem ->
                 viewModelScope.launch {
-                    val newItems = repository.getFolderContent(previousItem.id)
-                    mutableModel.postValue(
-                        currentModel.copy(
-                            currentPath = newPath,
-                            items = newItems,
+                    when (val result = repository.getFolderContent(previousItem.id)) {
+                        is Failure -> mutableModel.postValue(mutableModel.nonNullValue.copy(error = result.error))
+                        is Success -> mutableModel.postValue(
+                            currentModel.copy(
+                                currentPath = newPath,
+                                items = result.value,
+                            )
                         )
-                    )
+                    }
                 }
             }
             ?: mutableModel.postValue(
@@ -119,7 +127,7 @@ class MainViewModel @AssistedInject constructor(
 
     override fun insertNewFolder(folderName: String) {
         val tag = "INSERTING FOLDER"
-        val currentModel = mutableModel.value!!
+        val currentModel = mutableModel.nonNullValue
         val currentFolder = currentModel.currentPath.lastOrNull() ?: run {
             Log.e(tag, "Not able to add a new folder here. Not parent.")
             return
@@ -134,7 +142,7 @@ class MainViewModel @AssistedInject constructor(
     override fun onItemDeletionRequest(item: Item) {
         val tag = "DELETING FOLDER"
         Log.i(tag, "delete ${item.id}")
-        val currentModel = mutableModel.value!!
+        val currentModel = mutableModel.nonNullValue
         val currentFolder = currentModel.currentPath.lastOrNull() ?: run {
             Log.e(tag, "Deleting root is not allowed")
             return
@@ -151,13 +159,19 @@ class MainViewModel @AssistedInject constructor(
         getCurrentUser()
     }
 
+    override fun onErrorDismissed() {
+        mutableModel.postValue(mutableModel.nonNullValue.copy(error = null))
+    }
+
     private fun getCurrentUser() {
         viewModelScope.launch {
-            val currentUser = repository.getCurrentUser()
-            mutableModel.updateModel(
-                currentUser = currentUser,
-                items = listOfNotNull(currentUser.rootItem),
-            )
+            when (val result = repository.getCurrentUser()) {
+                is Failure -> mutableModel.postValue(mutableModel.nonNullValue.copy(error = result.error))
+                is Success -> mutableModel.updateModel(
+                    currentUser = result.value,
+                    items = listOfNotNull(result.value.rootItem),
+                )
+            }
         }
     }
 

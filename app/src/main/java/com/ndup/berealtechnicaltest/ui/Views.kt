@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -41,9 +42,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.ExperimentalUnitApi
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
@@ -140,6 +138,19 @@ fun ItemGrid(
     }
 }
 
+@Composable
+fun ErrorLayout(throwable: Throwable, onErrorDismissed: () -> Unit = { }) {
+    Column(modifier = Modifier.wrapContentHeight()) {
+        Text(
+            text = "An error occurred:\n${throwable.message}",
+            color = Color.White,
+        )
+        Button(onClick = { onErrorDismissed() }) {
+            Text(text = "Damn ... Ok I'll try to not reproduce this ...")
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoggingLayout(
@@ -220,4 +231,10 @@ private fun PreviewGrid3() {
 @Preview
 private fun PreviewLoggingLayout() {
     LoggingLayout()
+}
+
+@Composable
+@Preview
+private fun PreviewErrorLayout() {
+    ErrorLayout(Exception("ouppps this is a very bad behavior we should definitely fix in the app O_O"))
 }
