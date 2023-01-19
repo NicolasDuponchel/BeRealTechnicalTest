@@ -24,6 +24,10 @@ I built the app with a kind of MVVM pattern :
 - And we've got the loop closed.
 
 
+<p align="center">
+    <img src="demo.gif" width="200">
+</p>
+
 #### Used techno
 - Hilt for injection
 - Compose for UI
