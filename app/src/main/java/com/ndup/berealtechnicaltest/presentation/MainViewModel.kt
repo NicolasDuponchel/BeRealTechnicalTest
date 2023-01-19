@@ -87,7 +87,7 @@ class MainViewModel @AssistedInject constructor(
             val folderContent = repository.getFolderContent(item.id)
             mutableModel.updateModel(
                 items = folderContent,
-                currentPath = mutableModel.nonNullValue.currentPath.plus(item)
+                currentPath = mutableModel.nonNullValue.currentPath.plus(item).toSet().toList()
             )
         }
     }
