@@ -29,6 +29,7 @@ interface IMainListener {
     fun onItemSelected(item: Item)
     fun onBack(): Boolean
     fun insertNewFolder(folderName: String)
+    fun onItemDeletionRequest(item: Item)
 }
 
 class MainViewModel @AssistedInject constructor(
@@ -128,6 +129,21 @@ class MainViewModel @AssistedInject constructor(
         viewModelScope.launch {
             val createdItem = repository.createNewItem(currentFolder.id, folderName)
             Log.i(tag, "createdItem=$createdItem")
+            onItemSelected(currentFolder)
+        }
+    }
+
+    override fun onItemDeletionRequest(item: Item) {
+        val tag = "DELETING FOLDER"
+        Log.i(tag, "delete ${item.id}")
+        val currentModel = mutableModel.value!!
+        val currentFolder = currentModel.currentPath.lastOrNull() ?: run {
+            Log.e(tag, "Deleting root is not allowed")
+            return
+        }
+        viewModelScope.launch {
+            repository.deleteItem(item.id)
+            Log.i(tag, "${item.id} deleted successfully")
             onItemSelected(currentFolder)
         }
     }

@@ -11,4 +11,7 @@ class Repository @Inject constructor(
     override suspend fun getCurrentUser(): User = service.getCurrentUser()
     override suspend fun getFolderContent(folderId: String): Items = service.getFolderContent(folderId)
     override suspend fun createNewItem(folderId: String, folderName: String) = service.createNewItem(folderId, FolderNameDto(folderName))
+    override suspend fun deleteItem(folderId: String) {
+        service.deleteItemOrFolder(folderId)
+    }
 }

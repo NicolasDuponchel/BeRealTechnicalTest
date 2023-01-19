@@ -9,4 +9,5 @@ interface IRepository {
     suspend fun getCurrentUser(): User
     suspend fun getFolderContent(folderId: String): Items
     suspend fun createNewItem(folderId: String, folderName: String): Item
+    suspend fun deleteItem(folderId: String)
 }

@@ -4,6 +4,7 @@ import com.ndup.berealtechnicaltest.domain.FolderNameDto
 import com.ndup.berealtechnicaltest.domain.Item
 import com.ndup.berealtechnicaltest.domain.Items
 import com.ndup.berealtechnicaltest.domain.User
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -25,6 +26,6 @@ interface ApiServices {
     suspend fun createNewItem(@Path("id") folderId: String, @Body folderName: FolderNameDto): Item
 
     @DELETE("/items/{id}")
-    suspend fun deleteItemOrFolder(@Path("id") itemId: String): Nothing
+    suspend fun deleteItemOrFolder(@Path("id") itemId: String): Response<Unit>
 
 }

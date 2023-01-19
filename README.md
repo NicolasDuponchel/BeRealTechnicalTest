@@ -19,7 +19,7 @@ The goal is to:
 
 Plus, as a bonus if you have extra time:
 - [X] create a folder
-- [ ] delete a folder
+- [X] delete a folder
 - [ ] login page
 - [ ] upload a local file from the phone
 

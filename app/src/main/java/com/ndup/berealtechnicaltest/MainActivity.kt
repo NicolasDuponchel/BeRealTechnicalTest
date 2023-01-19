@@ -10,12 +10,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -78,6 +83,7 @@ class MainActivity : AppCompatActivity() {
         currentPath: List<Item>,
     ) {
         MaterialTheme {
+            val requestedIdToDelete: MutableState<Item?> = remember { mutableStateOf(null) }
             Scaffold(
                 modifier = modifier
                     .fillMaxHeight(),
@@ -113,7 +119,32 @@ class MainActivity : AppCompatActivity() {
                         currentPath.lastOrNull()
                             ?.takeUnless { it.isDir }
                             ?.let { FullScreenImage(item = it) }
-                            ?: ItemGrid(items, Modifier.fillMaxHeight(), 3) { mainListener.onItemSelected(it) }
+                            ?: ItemGrid(
+                                items,
+                                Modifier.fillMaxHeight(),
+                                3,
+                                onItemSelected = mainListener::onItemSelected,
+                                onItemLongPressed = { item ->
+                                    requestedIdToDelete.value = item.takeUnless { it.id == "4b8e41fd4a6a89712f15bbf102421b9338cfab11" }
+                                },
+                            )
+                    }
+                    requestedIdToDelete.value?.let { itemToBeDeleted ->
+                        AlertDialog(
+                            confirmButton = {
+                                Button(onClick = {
+                                    mainListener.onItemDeletionRequest(itemToBeDeleted)
+                                    requestedIdToDelete.value = null
+                                }) { Text(text = "Yes") }
+                            },
+                            dismissButton = {
+                                Button(onClick = { requestedIdToDelete.value = null }) { Text(text = "No") }
+                            },
+                            onDismissRequest = {
+                                requestedIdToDelete.value = null
+                            },
+                            text = { Text(text = "Delete ${itemToBeDeleted.name} ?") }
+                        )
                     }
                 }
             )
