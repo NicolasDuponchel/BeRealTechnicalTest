@@ -114,7 +114,7 @@ fun ItemGrid(
         contentPadding = PaddingValues(padding.dp),
         columns = GridCells.Adaptive(arrangementWidth.dp),
     ) {
-        items(items = list) { item ->
+        items(items = list, key = { it.id }) { item ->
             Item(
                 item = item,
                 modifier = Modifier
