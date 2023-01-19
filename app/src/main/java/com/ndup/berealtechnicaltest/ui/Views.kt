@@ -32,10 +32,9 @@ import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import coil.request.ImageRequest
-import com.ndup.berealtechnicaltest.MainActivity
+import com.ndup.berealtechnicaltest.logging.ApiModelObject
 import com.ndup.berealtechnicaltest.domain.Item
 import com.ndup.berealtechnicaltest.domain.Items
-import okhttp3.Credentials
 
 
 @Composable
@@ -43,7 +42,7 @@ fun FullScreenImage(
     modifier: Modifier = Modifier,
     item: Item,
 ) {
-    val imageUrl = "${MainActivity.BaseUrl}/items/${item.id}/data".also { println("download image at $it") }
+    val imageUrl = "${ApiModelObject.baseUrl}/items/${item.id}/data"
     val roundedShape = RoundedCornerShape(6.dp)
     BoxWithConstraints(
         modifier = modifier
@@ -80,7 +79,7 @@ fun FullScreenImage(
 
 @Composable
 fun crossFade(imageUrl: String) = ImageRequest.Builder(LocalContext.current)
-    .addHeader("Authorization", Credentials.basic(MainActivity.UserName, MainActivity.UserPassword))
+    .addHeader(ApiModelObject.headerCredentialName, ApiModelObject.credential)
     .data(imageUrl)
     .crossfade(true)
     .build()

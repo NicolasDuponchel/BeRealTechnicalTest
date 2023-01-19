@@ -5,17 +5,20 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.ndup.berealtechnicaltest.domain.Item
 import com.ndup.berealtechnicaltest.domain.Items
 import com.ndup.berealtechnicaltest.domain.User
 import com.ndup.berealtechnicaltest.repository.IRepository
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
 
 data class MainModel(
-    val currentUser: User? = null,
-    val currentPath: List<Item> = emptyList(),
-    val items: Items = emptyList(),
+    val currentUser: User?,
+    val currentPath: List<Item>,
+    val items: Items,
 )
 
 interface IMainListener {
@@ -26,11 +29,26 @@ interface IMainListener {
     fun onBack(): Boolean
 }
 
-class MainViewModel(
-    private val initialModel: MainModel = MainModel(),
+class MainViewModel @AssistedInject constructor(
+    private val initialModel: MainModel,
     private val repository: IRepository,
 ) : ViewModel(),
     IMainListener {
+
+    /**
+     * Custom factory allowing the Activity to create VM with param
+     */
+    @AssistedFactory
+    fun interface VMAssistedFactory {
+        operator fun invoke(): MainViewModel
+    }
+
+    class Factory(
+        private val assistedFactory: VMAssistedFactory,
+    ) : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T = assistedFactory() as T
+    }
 
     private val mutableModel: MutableModel by lazy { MutableModel(initialModel) }
 

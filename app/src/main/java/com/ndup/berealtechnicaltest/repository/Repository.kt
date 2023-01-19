@@ -2,8 +2,9 @@ package com.ndup.berealtechnicaltest.repository
 
 import com.ndup.berealtechnicaltest.domain.Items
 import com.ndup.berealtechnicaltest.domain.User
+import javax.inject.Inject
 
-class Repository(
+class Repository @Inject constructor(
     private val service: ApiServices,
 ) : IRepository {
     override suspend fun getCurrentUser(): User = service.getCurrentUser()
