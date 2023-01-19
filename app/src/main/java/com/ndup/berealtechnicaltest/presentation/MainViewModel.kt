@@ -23,7 +23,7 @@ interface IMainListener {
     fun getModelAsState(): State<MainModel>
 
     fun onItemSelected(item: Item)
-    fun onBack()
+    fun onBack(): Boolean
 }
 
 class MainViewModel(
@@ -74,9 +74,9 @@ class MainViewModel(
         else println("Not a folder, will handle image case next")
     }
 
-    override fun onBack() {
+    override fun onBack(): Boolean {
         val currentModel = mutableModel.value!!
-        if (currentModel.currentPath.isEmpty()) return // TODO NDU: do finish() in activity
+        if (currentModel.currentPath.isEmpty()) return false
 
         val newPath = currentModel.currentPath.dropLast(1)
 
@@ -98,7 +98,7 @@ class MainViewModel(
                     items = listOfNotNull(currentModel.currentUser?.rootItem),
                 )
             )
-
+        return true
     }
 
     private fun getCurrentUser() {

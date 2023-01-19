@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         onBackPressedDispatcher.addCallback {
-            mainListener.onBack()
+            if (!mainListener.onBack()) finish()
         }
     }
 
