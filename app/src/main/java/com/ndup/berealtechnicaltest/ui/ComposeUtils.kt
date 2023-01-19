@@ -1,4 +1,4 @@
-package com.ndup.berealtechnicaltest.ui.utils
+package com.ndup.berealtechnicaltest.ui
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.gestures.detectTransformGestures
@@ -8,7 +8,7 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import coil.request.ImageRequest
-import com.ndup.berealtechnicaltest.logging.ApiModelObject
+import com.ndup.berealtechnicaltest.login.ApiModelObject
 
 @SuppressLint("UnnecessaryComposedModifier")
 fun Modifier.onSimpleZoom(key1: Any? = Unit, action: (zoom: Float) -> Unit) = composed {

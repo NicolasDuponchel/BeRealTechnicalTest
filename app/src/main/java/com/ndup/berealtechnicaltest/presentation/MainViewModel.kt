@@ -13,7 +13,7 @@ import com.ndup.berealtechnicaltest.domain.Item
 import com.ndup.berealtechnicaltest.domain.Items
 import com.ndup.berealtechnicaltest.domain.Success
 import com.ndup.berealtechnicaltest.domain.User
-import com.ndup.berealtechnicaltest.logging.ApiModelObject
+import com.ndup.berealtechnicaltest.login.ApiModelObject
 import com.ndup.berealtechnicaltest.repository.IRepository
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject

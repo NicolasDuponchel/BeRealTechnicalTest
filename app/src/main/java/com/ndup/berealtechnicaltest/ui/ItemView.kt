@@ -31,8 +31,7 @@ import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import com.ndup.berealtechnicaltest.R
 import com.ndup.berealtechnicaltest.domain.Item
-import com.ndup.berealtechnicaltest.logging.ApiModelObject
-import com.ndup.berealtechnicaltest.ui.utils.imageLoaderModel
+import com.ndup.berealtechnicaltest.login.ApiModelObject
 
 
 @OptIn(ExperimentalUnitApi::class)

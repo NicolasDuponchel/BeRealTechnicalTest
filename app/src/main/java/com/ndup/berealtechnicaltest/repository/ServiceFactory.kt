@@ -1,7 +1,7 @@
 package com.ndup.berealtechnicaltest.repository
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.ndup.berealtechnicaltest.logging.ApiModelObject
+import com.ndup.berealtechnicaltest.login.ApiModelObject
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor

@@ -1,4 +1,4 @@
-package com.ndup.berealtechnicaltest
+package com.ndup.berealtechnicaltest.app
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

@@ -40,7 +40,7 @@ class AndroidRepositoryTest {
      * Currently having this issue. I'll see how to fix this latter.
      *
      * Hilt test, com.ndup.berealtechnicaltest.AndroidRepositoryTest, cannot use a @HiltAndroidApp application
-     * but found com.ndup.berealtechnicaltest.MainApp.
+     * but found com.ndup.berealtechnicaltest.app.MainApp.
      * To fix, configure the test to use HiltTestApplication
      * or a custom Hilt test application generated with @CustomTestApplication.
      */

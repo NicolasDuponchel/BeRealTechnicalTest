@@ -1,4 +1,4 @@
-package com.ndup.berealtechnicaltest
+package com.ndup.berealtechnicaltest.app
 
 import android.os.Bundle
 import androidx.activity.addCallback
@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import com.ndup.berealtechnicaltest.R
 import com.ndup.berealtechnicaltest.domain.Item
 import com.ndup.berealtechnicaltest.domain.Items
 import com.ndup.berealtechnicaltest.domain.User

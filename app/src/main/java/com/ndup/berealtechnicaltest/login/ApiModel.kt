@@ -1,4 +1,4 @@
-package com.ndup.berealtechnicaltest.logging
+package com.ndup.berealtechnicaltest.login
 
 import okhttp3.Credentials
 import okhttp3.logging.HttpLoggingInterceptor
