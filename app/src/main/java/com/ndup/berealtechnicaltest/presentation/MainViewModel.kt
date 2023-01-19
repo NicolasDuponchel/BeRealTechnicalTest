@@ -37,9 +37,10 @@ class MainViewModel(
     class MutableModel(private val initialModel: MainModel) : MutableLiveData<MainModel>(initialModel) {
 
         // value is nullable... this is making me crazy ><
-        private val nonNullValue: MainModel get() = value ?: initialModel
+        val nonNullValue: MainModel get() = value ?: initialModel
 
-        // I don't like this pattern. Wanted to do something cool non mutable but finally this is not as cool as I expected.
+        // I don't like this pattern.
+        // I wanted to do something cool non mutable but finally this is not as cool as I expected.
         fun updateModel(
             currentUser: User? = null,
             currentPath: List<Item>? = null,
@@ -61,17 +62,13 @@ class MainViewModel(
     override fun getModelAsState() = mutableModel.observeAsState(initial = initialModel)
 
     override fun onItemSelected(item: Item) {
-        if (item.isDir) viewModelScope.launch {
+        viewModelScope.launch {
             val folderContent = repository.getFolderContent(item.id)
-            val currentModel = mutableModel.value!!
-            mutableModel.postValue(
-                currentModel.copy(
-                    items = folderContent,
-                    currentPath = currentModel.currentPath.plus(item)
-                )
+            mutableModel.updateModel(
+                items = folderContent,
+                currentPath = mutableModel.nonNullValue.currentPath.plus(item)
             )
         }
-        else println("Not a folder, will handle image case next")
     }
 
     override fun onBack(): Boolean {

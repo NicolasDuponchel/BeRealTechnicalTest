@@ -14,23 +14,26 @@ import retrofit2.Retrofit
 @OptIn(ExperimentalSerializationApi::class)
 object ServiceFactory {
 
-    private const val BaseUrl = "http://163.172.147.216:8080/"
-    private const val DebugUserName = "noel"
-    private const val DebugUserPassword = "foobar"
-
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(BaseUrl)
+    private fun getRetrofit(
+        baseUrl: String,
+        debugUserName: String,
+        debugUserPassword: String,
+        logLevel: HttpLoggingInterceptor.Level,
+    ) = Retrofit.Builder()
+        .baseUrl(baseUrl)
         .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
-        .client(client)
+        .client(getClient(debugUserName, debugUserPassword, logLevel))
         .build()
 
-    private val client
-        get() = OkHttpClient.Builder()
-            .addInterceptor { authInterceptor(it, DebugUserName, DebugUserPassword) }
-            .addInterceptor(HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }) // NONE
-            .build()
+    private fun getClient(
+        debugUserName: String,
+        debugUserPassword: String,
+        logLevel: HttpLoggingInterceptor.Level,
+    ) = OkHttpClient.Builder()
+        .addInterceptor { authInterceptor(it, debugUserName, debugUserPassword) }
+        .addInterceptor(HttpLoggingInterceptor().apply { level = logLevel })
+        .build()
 
-    @Suppress("SameParameterValue")
     private fun authInterceptor(chain: Interceptor.Chain, user: String, password: String) = chain.proceed(
         chain
             .request()
@@ -39,6 +42,11 @@ object ServiceFactory {
     )
 
 
-    val service: ApiServices = retrofit.create(ApiServices::class.java)
+    fun service(
+        baseUrl: String,
+        userName: String,
+        userPassword: String,
+        logLevel: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.NONE,
+    ): ApiServices = getRetrofit(baseUrl, userName, userPassword, logLevel).create(ApiServices::class.java)
 
 }

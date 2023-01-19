@@ -1,7 +1,9 @@
 package com.ndup.berealtechnicaltest.repository
 
+import com.ndup.berealtechnicaltest.MainActivity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import okhttp3.logging.HttpLoggingInterceptor
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -10,7 +12,14 @@ import org.junit.Test
 internal class RepositoryTest {
 
     private val repository by lazy {
-        Repository(ServiceFactory.service)
+        Repository(
+            ServiceFactory.service(
+                baseUrl = MainActivity.BaseUrl,
+                userName = MainActivity.UserName,
+                userPassword = MainActivity.UserPassword,
+                logLevel = HttpLoggingInterceptor.Level.BODY,
+            )
+        )
     }
 
     /**
