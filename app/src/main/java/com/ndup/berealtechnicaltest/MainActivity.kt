@@ -9,6 +9,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -17,15 +18,19 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -36,9 +41,9 @@ import com.ndup.berealtechnicaltest.domain.User
 import com.ndup.berealtechnicaltest.presentation.IMainListener
 import com.ndup.berealtechnicaltest.presentation.MainViewModel
 import com.ndup.berealtechnicaltest.ui.ErrorLayout
-import com.ndup.berealtechnicaltest.ui.LoggingLayout
 import com.ndup.berealtechnicaltest.ui.FullScreenImage
 import com.ndup.berealtechnicaltest.ui.ItemGrid
+import com.ndup.berealtechnicaltest.ui.LoggingLayout
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -73,7 +78,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     ?: LoggingLayout(
                         modifier = Modifier.padding(26.dp),
-                        onLoggingValidate = { name, password -> mainListener.onLoggingRequest(name, password)}
+                        onLoggingValidate = { name, password -> mainListener.onLoggingRequest(name, password) }
                     )
             }
         }
@@ -91,6 +96,7 @@ class MainActivity : AppCompatActivity() {
         currentPath: List<Item>,
     ) {
         MaterialTheme {
+            val isRequestingForInsertion: MutableState<Boolean> = remember { mutableStateOf(false) }
             val requestedIdToDelete: MutableState<Item?> = remember { mutableStateOf(null) }
             Scaffold(
                 modifier = modifier
@@ -98,9 +104,7 @@ class MainActivity : AppCompatActivity() {
                 containerColor = Color.Black,
                 floatingActionButton = {
                     if (currentPath.lastOrNull()?.isDir == true) FloatingActionButton(
-                        // TODO NDU: currently assigning folder name automatically
-                        // I'll probably use a TextField if I have time
-                        onClick = { mainListener.insertNewFolder("NDU${System.currentTimeMillis()}") },
+                        onClick = { isRequestingForInsertion.value = true },
                         containerColor = Color.White,
                     ) {
                         Image(
@@ -136,6 +140,31 @@ class MainActivity : AppCompatActivity() {
                                     requestedIdToDelete.value = item.takeUnless { it.id == "4b8e41fd4a6a89712f15bbf102421b9338cfab11" }
                                 },
                             )
+                    }
+                    if (isRequestingForInsertion.value) {
+                        var itemTitle by remember { mutableStateOf(TextFieldValue("")) }
+                        AlertDialog(
+                            confirmButton = {
+                                Button(onClick = {
+                                    isRequestingForInsertion.value = false
+                                    mainListener.insertNewFolder(itemTitle.text)
+                                }) { Text(text = "Confirm") }
+                            },
+                            dismissButton = {
+                                Button(onClick = { isRequestingForInsertion.value = false }) { Text(text = "Cancel") }
+                            },
+                            onDismissRequest = {
+                                isRequestingForInsertion.value = false
+                            },
+                            text = {
+                                TextField(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    value = itemTitle,
+                                    onValueChange = { itemTitle = it },
+                                    placeholder = { Text(text = "Enter a title") },
+                                )
+                            }
+                        )
                     }
                     requestedIdToDelete.value?.let { itemToBeDeleted ->
                         AlertDialog(
