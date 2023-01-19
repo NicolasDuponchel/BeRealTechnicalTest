@@ -28,16 +28,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
-import coil.request.ImageRequest
 import com.ndup.berealtechnicaltest.domain.Item
 import com.ndup.berealtechnicaltest.domain.Items
 import com.ndup.berealtechnicaltest.logging.ApiModelObject
+import com.ndup.berealtechnicaltest.ui.utils.imageLoaderModel
 import com.ndup.berealtechnicaltest.ui.utils.onSimpleZoom
 
 
@@ -46,7 +45,7 @@ fun FullScreenImage(
     modifier: Modifier = Modifier,
     item: Item,
 ) {
-    val imageUrl = "${ApiModelObject.baseUrl}/items/${item.id}/data"
+    val imageUrl = ApiModelObject.getImageUrl(item.id)
     val roundedShape = RoundedCornerShape(6.dp)
     BoxWithConstraints(
         modifier = modifier
@@ -64,7 +63,7 @@ fun FullScreenImage(
     ) {
         SubcomposeAsyncImage(
             modifier = modifier.fillMaxSize(),
-            model = crossFade(imageUrl = imageUrl),
+            model = imageLoaderModel(imageUrl = imageUrl),
             contentDescription = item.name,
             contentScale = ContentScale.Crop,
         ) {
@@ -81,12 +80,6 @@ fun FullScreenImage(
     }
 }
 
-@Composable
-fun crossFade(imageUrl: String) = ImageRequest.Builder(LocalContext.current)
-    .addHeader(ApiModelObject.headerCredentialName, ApiModelObject.credential)
-    .data(imageUrl)
-    .crossfade(true)
-    .build()
 
 @Composable
 fun ItemGrid(
@@ -144,18 +137,23 @@ fun ErrorLayout() {
 @Preview
 private fun PreviewGrid() {
     ItemGrid(
-        list = Item.fromListJson("""[{"id":"d0626b4fc3cd2056341c385fc6f3025dab515ce3","parentId":"82a06b9e18ab2cba3c8edf379aa15eb482df0a1d",
-            |"name":"P-Chan_by_el-maky-z.png","isDir":false,"size":491222,"contentType":"image/png","modificationDate":"2022-12-20T19:03:58.458752299Z"},{"id":"4ce6a56274e5733b34473a99d596cf7e0d26c6b5","parentId":"82a06b9e18ab2cba3c8edf379aa15eb482df0a1d","name":"gus2","isDir":true,"modificationDate":"2023-01-01T17:40:20.92298573Z"},{"id":"9e8bca2ce6bbb1a93abcf4b04119b739154f3a38","parentId":"82a06b9e18ab2cba3c8edf379aa15eb482df0a1d","name":"images.jpeg","isDir":false,"size":10712,"contentType":"image/jpeg","modificationDate":"2022-12-19T13:24:33.620810208Z"}]""".trimMargin()),
+        list = Item.fromListJson(
+            """[{"id":"d0626b4fc3cd2056341c385fc6f3025dab515ce3","parentId":"82a06b9e18ab2cba3c8edf379aa15eb482df0a1d",
+            |"name":"P-Chan_by_el-maky-z.png","isDir":false,"size":491222,"contentType":"image/png","modificationDate":"2022-12-20T19:03:58.458752299Z"},{"id":"4ce6a56274e5733b34473a99d596cf7e0d26c6b5","parentId":"82a06b9e18ab2cba3c8edf379aa15eb482df0a1d","name":"gus2","isDir":true,"modificationDate":"2023-01-01T17:40:20.92298573Z"},{"id":"9e8bca2ce6bbb1a93abcf4b04119b739154f3a38","parentId":"82a06b9e18ab2cba3c8edf379aa15eb482df0a1d","name":"images.jpeg","isDir":false,"size":10712,"contentType":"image/jpeg","modificationDate":"2022-12-19T13:24:33.620810208Z"}]""".trimMargin()
+        ),
         modifier = Modifier.fillMaxHeight(),
         initialColumnCount = 1,
     )
 }
+
 @Composable
 @Preview
 private fun PreviewGrid3() {
     ItemGrid(
-        list = Item.fromListJson("""[{"id":"d0626b4fc3cd2056341c385fc6f3025dab515ce3","parentId":"82a06b9e18ab2cba3c8edf379aa15eb482df0a1d",
-            |"name":"P-Chan_by_el-maky-z.png","isDir":false,"size":491222,"contentType":"image/png","modificationDate":"2022-12-20T19:03:58.458752299Z"},{"id":"4ce6a56274e5733b34473a99d596cf7e0d26c6b5","parentId":"82a06b9e18ab2cba3c8edf379aa15eb482df0a1d","name":"gus2","isDir":true,"modificationDate":"2023-01-01T17:40:20.92298573Z"},{"id":"9e8bca2ce6bbb1a93abcf4b04119b739154f3a38","parentId":"82a06b9e18ab2cba3c8edf379aa15eb482df0a1d","name":"images.jpeg","isDir":false,"size":10712,"contentType":"image/jpeg","modificationDate":"2022-12-19T13:24:33.620810208Z"}]""".trimMargin()),
+        list = Item.fromListJson(
+            """[{"id":"d0626b4fc3cd2056341c385fc6f3025dab515ce3","parentId":"82a06b9e18ab2cba3c8edf379aa15eb482df0a1d",
+            |"name":"P-Chan_by_el-maky-z.png","isDir":false,"size":491222,"contentType":"image/png","modificationDate":"2022-12-20T19:03:58.458752299Z"},{"id":"4ce6a56274e5733b34473a99d596cf7e0d26c6b5","parentId":"82a06b9e18ab2cba3c8edf379aa15eb482df0a1d","name":"gus2","isDir":true,"modificationDate":"2023-01-01T17:40:20.92298573Z"},{"id":"9e8bca2ce6bbb1a93abcf4b04119b739154f3a38","parentId":"82a06b9e18ab2cba3c8edf379aa15eb482df0a1d","name":"images.jpeg","isDir":false,"size":10712,"contentType":"image/jpeg","modificationDate":"2022-12-19T13:24:33.620810208Z"}]""".trimMargin()
+        ),
         modifier = Modifier.fillMaxHeight(),
         initialColumnCount = 3,
     )

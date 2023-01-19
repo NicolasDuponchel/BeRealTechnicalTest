@@ -26,5 +26,7 @@ object ApiModelObject {
 
     val logLevel = HttpLoggingInterceptor.Level.BODY
 
+    fun getImageUrl(itemId: String) = "${baseUrl}/items/${itemId}/data"
+
     const val headerCredentialName = "Authorization"
 }
