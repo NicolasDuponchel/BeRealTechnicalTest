@@ -14,7 +14,7 @@ Server is available at http://163.172.147.216:8080
 
 The goal is to:
 - [X] connect to the server
-- [ ] navigate file hierarchy
+- [X] navigate file hierarchy
 - [ ] display a fullscreen image
 
 Plus, as a bonus if you have extra time:

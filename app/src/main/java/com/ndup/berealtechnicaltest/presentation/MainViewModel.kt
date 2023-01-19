@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 data class MainModel(
     val currentUser: User? = null,
-    val currentPath: List<String> = emptyList(),
+    val currentPath: List<Item> = emptyList(),
     val items: Items = emptyList(),
 )
 
@@ -23,6 +23,7 @@ interface IMainListener {
     fun getModelAsState(): State<MainModel>
 
     fun onItemSelected(item: Item)
+    fun onBack()
 }
 
 class MainViewModel(
@@ -41,7 +42,7 @@ class MainViewModel(
         // I don't like this pattern. Wanted to do something cool non mutable but finally this is not as cool as I expected.
         fun updateModel(
             currentUser: User? = null,
-            currentPath: List<String>? = null,
+            currentPath: List<Item>? = null,
             items: Items? = null,
         ) = postValue(
             nonNullValue.copy(
@@ -60,16 +61,44 @@ class MainViewModel(
     override fun getModelAsState() = mutableModel.observeAsState(initial = initialModel)
 
     override fun onItemSelected(item: Item) {
-        viewModelScope.launch {
+        if (item.isDir) viewModelScope.launch {
             val folderContent = repository.getFolderContent(item.id)
             val currentModel = mutableModel.value!!
             mutableModel.postValue(
                 currentModel.copy(
                     items = folderContent,
-                    currentPath = currentModel.currentPath.plus(item.name)
+                    currentPath = currentModel.currentPath.plus(item)
                 )
             )
         }
+        else println("Not a folder, will handle image case next")
+    }
+
+    override fun onBack() {
+        val currentModel = mutableModel.value!!
+        if (currentModel.currentPath.isEmpty()) return // TODO NDU: do finish() in activity
+
+        val newPath = currentModel.currentPath.dropLast(1)
+
+        newPath.lastOrNull()
+            ?.let { previousItem ->
+                viewModelScope.launch {
+                    val newItems = repository.getFolderContent(previousItem.id)
+                    mutableModel.postValue(
+                        currentModel.copy(
+                            currentPath = newPath,
+                            items = newItems,
+                        )
+                    )
+                }
+            }
+            ?: mutableModel.postValue(
+                currentModel.copy(
+                    currentPath = newPath,
+                    items = listOfNotNull(currentModel.currentUser?.rootItem),
+                )
+            )
+
     }
 
     private fun getCurrentUser() {
@@ -77,7 +106,6 @@ class MainViewModel(
             val currentUser = repository.getCurrentUser()
             mutableModel.updateModel(
                 currentUser = currentUser,
-                currentPath = listOf("${currentUser.firstName.take(1)}${currentUser.lastName}".lowercase()),
                 items = listOfNotNull(currentUser.rootItem),
             )
         }

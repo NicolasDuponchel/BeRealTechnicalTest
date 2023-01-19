@@ -1,6 +1,7 @@
 package com.ndup.berealtechnicaltest
 
 import android.os.Bundle
+import androidx.activity.addCallback
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.clickable
@@ -50,6 +51,10 @@ class MainActivity : AppCompatActivity() {
                     ?: ErrorLayout()
             }
         }
+
+        onBackPressedDispatcher.addCallback {
+            mainListener.onBack()
+        }
     }
 
     @Composable
@@ -57,11 +62,12 @@ class MainActivity : AppCompatActivity() {
         modifier: Modifier = Modifier,
         mainUser: User,
         items: Items,
-        currentPath: List<String>,
+        currentPath: List<Item>,
     ) {
         Column {
+            val rootUser = "${mainUser.firstName.take(1)}${mainUser.lastName}".lowercase()
             Text(
-                text = "~${currentPath.joinToString(separator = "/")}",
+                text = "~/$rootUser${currentPath.joinToString(separator = "/", prefix = "/") { it.name }}",
                 color = Color.White,
             )
             ItemGrid(items, Modifier.fillMaxHeight(), 1) { mainListener.onItemSelected(it) }
