@@ -8,7 +8,7 @@ import kotlinx.serialization.json.Json
 data class User(
     val firstName: String,
     val lastName: String,
-    val rootItem: RootItem,
+    val rootItem: Item,
 ) {
 
     val json get() = jsonSerializer.encodeToString(this)
@@ -20,11 +20,3 @@ data class User(
     }
 }
 
-@Serializable
-data class RootItem(
-    val id: String,
-    val parentId: String,
-    val name: String,
-    val isDir: Boolean,
-    val modificationDate: String,
-)

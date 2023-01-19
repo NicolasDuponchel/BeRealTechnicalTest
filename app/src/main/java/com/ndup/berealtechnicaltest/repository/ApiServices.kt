@@ -1,5 +1,7 @@
 package com.ndup.berealtechnicaltest.repository
 
+import com.ndup.berealtechnicaltest.domain.Item
+import com.ndup.berealtechnicaltest.domain.Items
 import com.ndup.berealtechnicaltest.domain.User
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -13,7 +15,7 @@ interface ApiServices {
 
 
     @GET("items/{id}")
-    suspend fun getFolderContent(@Path("id") folderId: String): Nothing
+    suspend fun getFolderContent(@Path("id") folderId: String): Items
 
     @POST("items/{id}")
     suspend fun createNewItemInFolder(@Path("id") folderId: String): Nothing
