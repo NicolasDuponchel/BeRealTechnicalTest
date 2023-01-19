@@ -4,17 +4,24 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,11 +31,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.ExperimentalUnitApi
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
@@ -125,12 +140,54 @@ fun ItemGrid(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ErrorLayout() {
-    Text(
-        text = "No user identified :(",
-        color = Color.White,
-    )
+fun LoggingLayout(
+    modifier: Modifier = Modifier,
+    onLoggingValidate: (userName: String, userPassword: String) -> Unit = { _, _ -> },
+) {
+    Column(
+        modifier = modifier
+            .wrapContentWidth(),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalAlignment = Alignment.End,
+    ) {
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = "You need to logg in.",
+            color = Color.White,
+            style = MaterialTheme.typography.titleLarge.copy(
+                shadow = Shadow(
+                    color = Color.Black,
+                    offset = Offset(4f, 4f),
+                    blurRadius = 8f
+                )
+            ),
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        var userName by remember { mutableStateOf(TextFieldValue("")) }
+        var userPassword by remember { mutableStateOf(TextFieldValue("")) }
+        TextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = userName,
+            onValueChange = { userName = it },
+            placeholder = { Text(text = "user name") },
+        )
+        TextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = userPassword,
+            onValueChange = { userPassword = it },
+            placeholder = { Text(text = "user password") },
+        )
+        Button(
+            modifier = Modifier.wrapContentWidth(),
+            onClick = { onLoggingValidate(userName.text, userPassword.text) },
+        ) {
+            Text("confirm")
+        }
+    }
 }
 
 @Composable
@@ -157,4 +214,10 @@ private fun PreviewGrid3() {
         modifier = Modifier.fillMaxHeight(),
         initialColumnCount = 3,
     )
+}
+
+@Composable
+@Preview
+private fun PreviewLoggingLayout() {
+    LoggingLayout()
 }

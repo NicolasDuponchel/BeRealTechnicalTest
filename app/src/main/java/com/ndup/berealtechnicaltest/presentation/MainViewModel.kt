@@ -11,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.ndup.berealtechnicaltest.domain.Item
 import com.ndup.berealtechnicaltest.domain.Items
 import com.ndup.berealtechnicaltest.domain.User
+import com.ndup.berealtechnicaltest.logging.ApiModelObject
 import com.ndup.berealtechnicaltest.repository.IRepository
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -30,6 +31,7 @@ interface IMainListener {
     fun onBack(): Boolean
     fun insertNewFolder(folderName: String)
     fun onItemDeletionRequest(item: Item)
+    fun onLoggingRequest(name: String, password: String)
 }
 
 class MainViewModel @AssistedInject constructor(
@@ -73,10 +75,6 @@ class MainViewModel @AssistedInject constructor(
                 items = items ?: nonNullValue.items,
             )
         )
-    }
-
-    init {
-        getCurrentUser()
     }
 
     @Composable
@@ -146,6 +144,11 @@ class MainViewModel @AssistedInject constructor(
             Log.i(tag, "${item.id} deleted successfully")
             onItemSelected(currentFolder)
         }
+    }
+
+    override fun onLoggingRequest(name: String, password: String) {
+        ApiModelObject.updateCredentials(name, password)
+        getCurrentUser()
     }
 
     private fun getCurrentUser() {

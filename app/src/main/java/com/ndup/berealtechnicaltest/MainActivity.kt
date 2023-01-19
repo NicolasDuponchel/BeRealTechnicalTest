@@ -35,7 +35,7 @@ import com.ndup.berealtechnicaltest.domain.Items
 import com.ndup.berealtechnicaltest.domain.User
 import com.ndup.berealtechnicaltest.presentation.IMainListener
 import com.ndup.berealtechnicaltest.presentation.MainViewModel
-import com.ndup.berealtechnicaltest.ui.ErrorLayout
+import com.ndup.berealtechnicaltest.ui.LoggingLayout
 import com.ndup.berealtechnicaltest.ui.FullScreenImage
 import com.ndup.berealtechnicaltest.ui.ItemGrid
 import dagger.hilt.android.AndroidEntryPoint
@@ -66,7 +66,10 @@ class MainActivity : AppCompatActivity() {
                             currentPath = currentPath,
                         )
                     }
-                    ?: ErrorLayout()
+                    ?: LoggingLayout(
+                        modifier = Modifier.padding(26.dp),
+                        onLoggingValidate = { name, password -> mainListener.onLoggingRequest(name, password)}
+                    )
             }
         }
 
