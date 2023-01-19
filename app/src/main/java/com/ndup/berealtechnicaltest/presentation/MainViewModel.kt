@@ -1,5 +1,6 @@
 package com.ndup.berealtechnicaltest.presentation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.livedata.observeAsState
@@ -27,6 +28,7 @@ interface IMainListener {
 
     fun onItemSelected(item: Item)
     fun onBack(): Boolean
+    fun insertNewFolder(folderName: String)
 }
 
 class MainViewModel @AssistedInject constructor(
@@ -114,6 +116,20 @@ class MainViewModel @AssistedInject constructor(
                 )
             )
         return true
+    }
+
+    override fun insertNewFolder(folderName: String) {
+        val tag = "INSERTING FOLDER"
+        val currentModel = mutableModel.value!!
+        val currentFolder = currentModel.currentPath.lastOrNull() ?: run {
+            Log.e(tag, "Not able to add a new folder here. Not parent.")
+            return
+        }
+        viewModelScope.launch {
+            val createdItem = repository.createNewItem(currentFolder.id, folderName)
+            Log.i(tag, "createdItem=$createdItem")
+            onItemSelected(currentFolder)
+        }
     }
 
     private fun getCurrentUser() {

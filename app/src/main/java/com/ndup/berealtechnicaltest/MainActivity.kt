@@ -5,14 +5,25 @@ import androidx.activity.addCallback
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.ExperimentalUnitApi
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import com.ndup.berealtechnicaltest.domain.Item
 import com.ndup.berealtechnicaltest.domain.Items
@@ -26,6 +37,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
+@ExperimentalMaterial3Api
+@OptIn(ExperimentalUnitApi::class)
 class MainActivity : AppCompatActivity() {
 
     @Inject
@@ -64,21 +77,46 @@ class MainActivity : AppCompatActivity() {
         items: Items,
         currentPath: List<Item>,
     ) {
-        Column(
-            modifier = modifier
-                .fillMaxHeight()
-                .padding(8.dp),
-            verticalArrangement = Arrangement.spacedBy(26.dp),
-        ) {
-            val rootUser = "${mainUser.firstName.take(1)}${mainUser.lastName}".lowercase()
-            Text(
-                text = "~/$rootUser${currentPath.joinToString(separator = "/", prefix = "/") { it.name }}",
-                color = Color.White,
+        MaterialTheme {
+            Scaffold(
+                modifier = modifier
+                    .fillMaxHeight(),
+                containerColor = Color.Black,
+                floatingActionButton = {
+                    if (currentPath.lastOrNull()?.isDir == true) FloatingActionButton(
+                        // TODO NDU: currently assigning folder name automatically
+                        // I'll probably use a TextField if I have time
+                        onClick = { mainListener.insertNewFolder("NDU${System.currentTimeMillis()}") },
+                        containerColor = Color.White,
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_new_folder),
+                            colorFilter = ColorFilter.tint(Color.Black),
+                            contentDescription = "Add a new folder",
+                            contentScale = ContentScale.Crop,
+                        )
+                    }
+                },
+                content = { contentPadding ->
+                    Column(
+                        modifier = modifier
+                            .fillMaxHeight()
+                            .padding(contentPadding),
+                        verticalArrangement = Arrangement.spacedBy(26.dp),
+                    ) {
+                        val rootUser = "${mainUser.firstName.take(1)}${mainUser.lastName}".lowercase()
+                        Text(
+                            text = "~/$rootUser${currentPath.joinToString(separator = "/", prefix = "/") { it.name }}",
+                            color = Color.White,
+                            fontSize = TextUnit(13f, TextUnitType.Sp),
+                        )
+                        currentPath.lastOrNull()
+                            ?.takeUnless { it.isDir }
+                            ?.let { FullScreenImage(item = it) }
+                            ?: ItemGrid(items, Modifier.fillMaxHeight(), 3) { mainListener.onItemSelected(it) }
+                    }
+                }
             )
-            currentPath.lastOrNull()
-                ?.takeUnless { it.isDir }
-                ?.let { FullScreenImage(item = it) }
-                ?: ItemGrid(items, Modifier.fillMaxHeight(), 3) { mainListener.onItemSelected(it) }
         }
     }
 

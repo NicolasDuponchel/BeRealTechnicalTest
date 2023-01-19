@@ -18,7 +18,7 @@ The goal is to:
 - [X] display a fullscreen image
 
 Plus, as a bonus if you have extra time:
-- [ ] create a folder
+- [X] create a folder
 - [ ] delete a folder
 - [ ] login page
 - [ ] upload a local file from the phone
