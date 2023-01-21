@@ -157,7 +157,15 @@ fun LoggingLayout(
 ) {
     Column(
         modifier = modifier
-            .wrapContentWidth(),
+            .wrapContentWidth()
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onLongPress = {
+                        // Didn't want to have to login all the time
+                        onLoggingValidate("noel", "foobar")
+                    },
+                )
+            },
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.End,
     ) {

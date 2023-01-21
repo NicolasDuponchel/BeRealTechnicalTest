@@ -11,8 +11,8 @@ object ApiModelObject {
 
     private data class ApiModel(
         val baseUrl: String = "http://163.172.147.216:8080",
-        val name: String = "",//"noel",
-        val password: String = "", //"foobar",
+        val name: String = "",
+        val password: String = "",
     )
 
     private var apiModel = ApiModel()
