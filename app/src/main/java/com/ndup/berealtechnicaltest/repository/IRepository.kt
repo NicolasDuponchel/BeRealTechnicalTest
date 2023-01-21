@@ -9,6 +9,6 @@ import com.ndup.berealtechnicaltest.domain.User
 interface IRepository {
     suspend fun getCurrentUser(): Either<User>
     suspend fun getFolderContent(folderId: String): Either<Items>
-    suspend fun createNewItem(folderId: String, folderName: String): Either<Item>
+    suspend fun createNewFolder(folderId: String, folderName: String): Either<Item>
     suspend fun deleteItem(folderId: String): Either<Boolean>
 }

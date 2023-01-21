@@ -133,7 +133,7 @@ class MainViewModel @AssistedInject constructor(
             return
         }
         viewModelScope.launch {
-            val createdItem = repository.createNewItem(currentFolder.id, folderName)
+            val createdItem = repository.createNewFolder(currentFolder.id, folderName)
             Log.i(tag, "createdItem=$createdItem")
             onItemSelected(currentFolder)
         }

@@ -14,8 +14,8 @@ class Repository @Inject constructor(
 
     override suspend fun getFolderContent(folderId: String) = safeCallToApi { service.getFolderContent(folderId) }
 
-    override suspend fun createNewItem(folderId: String, folderName: String) =
-        safeCallToApi { service.createNewItem(folderId, FolderNameDto(folderName)) }
+    override suspend fun createNewFolder(folderId: String, folderName: String) =
+        safeCallToApi { service.createNewFolder(folderId, FolderNameDto(folderName)) }
 
     override suspend fun deleteItem(folderId: String) = safeCallToApi {
         service.deleteItemOrFolder(folderId).isSuccessful

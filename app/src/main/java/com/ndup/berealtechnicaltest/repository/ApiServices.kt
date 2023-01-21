@@ -23,7 +23,7 @@ interface ApiServices {
 
     @Headers("Content-Type: application/json")
     @POST("/items/{id}")
-    suspend fun createNewItem(@Path("id") folderId: String, @Body folderName: FolderNameDto): Item
+    suspend fun createNewFolder(@Path("id") folderId: String, @Body folderName: FolderNameDto): Item
 
     @DELETE("/items/{id}")
     suspend fun deleteItemOrFolder(@Path("id") itemId: String): Response<Unit>
