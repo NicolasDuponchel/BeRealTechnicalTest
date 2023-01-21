@@ -18,6 +18,7 @@ import com.ndup.berealtechnicaltest.repository.IRepository
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
+import java.io.InputStream
 
 data class MainModel(
     val currentUser: User?,
@@ -36,6 +37,7 @@ interface IMainListener {
     fun onItemDeletionRequest(item: Item)
     fun onLoggingRequest(name: String, password: String)
     fun onErrorDismissed()
+    fun uploadStream(stream: InputStream)
 }
 
 class MainViewModel @AssistedInject constructor(
@@ -91,6 +93,7 @@ class MainViewModel @AssistedInject constructor(
                 is Success -> mutableModel.updateModel(
                     items = result.value,
                     currentPath = mutableModel.nonNullValue.currentPath.plus(item).toSet().toList()
+                        .also { Log.v("ITEMS", it.lastOrNull().toString()) }
                 )
             }
         }
@@ -161,6 +164,28 @@ class MainViewModel @AssistedInject constructor(
 
     override fun onErrorDismissed() {
         mutableModel.postValue(mutableModel.nonNullValue.copy(error = null))
+    }
+
+    override fun uploadStream(stream: InputStream) {
+        val tag = "UPLOADING IMAGE"
+        val currentFolder = mutableModel.nonNullValue.currentPath.lastOrNull() ?: run {
+            Log.e(tag, "Cannot upload here.")
+            return
+        }
+        viewModelScope.launch {
+            val result = repository.uploadStream(
+                folderId = currentFolder.id,
+                fileName = "IMG_${System.currentTimeMillis()}",
+                inputStream = stream,
+            )
+            when (result) {
+                is Failure -> mutableModel.postValue(mutableModel.nonNullValue.copy(error = result.error))
+                is Success -> {
+                    Log.i(tag, "Image uploaded ! ${result.value}")
+                    onItemSelected(currentFolder)
+                }
+            }
+        }
     }
 
     private fun getCurrentUser() {

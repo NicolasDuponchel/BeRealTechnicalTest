@@ -28,7 +28,7 @@ object ApiModelObject {
 
     val credential: String get() = Credentials.basic(apiModel.name, apiModel.password)
 
-    val logLevel = HttpLoggingInterceptor.Level.BODY
+    val logLevel = HttpLoggingInterceptor.Level.HEADERS
 
     fun getImageUrl(itemId: String) = "${baseUrl}/items/${itemId}/data"
 

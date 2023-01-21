@@ -52,7 +52,7 @@ Plus, as a bonus if you have extra time:
 - [X] create a folder
 - [X] delete a folder
 - [X] login page
-- [ ] upload a local file from the phone
+- [X] upload a local file from the phone
 
 You’re not expected to do everything perfectly on the 'goal' list, this would be too long. This is your opportunity to showcase your skills and you can spend more time on one area vs another (UI, architecture…)
 It’s expected you'll spend approx. 3 - 4 hours on the test, but you can spend a little bit more than that if you want (but we appreciate you are busy).

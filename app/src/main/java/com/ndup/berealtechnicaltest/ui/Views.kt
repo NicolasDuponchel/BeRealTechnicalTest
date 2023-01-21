@@ -1,5 +1,6 @@
 package com.ndup.berealtechnicaltest.ui
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -78,12 +79,15 @@ fun FullScreenImage(
             contentDescription = item.name,
             contentScale = ContentScale.Crop,
         ) {
-            when (painter.state) {
-                AsyncImagePainter.State.Empty,
-                is AsyncImagePainter.State.Error -> Text(
-                    text = "NOT able to load image at $imageUrl",
+            when (val state = painter.state) {
+                AsyncImagePainter.State.Empty -> Text(
+                    text = "NOT able to load image at $imageUrl\n$state}",
                     color = Color.White
                 )
+                is AsyncImagePainter.State.Error -> Text(
+                    text = "NOT able to load image at $imageUrl\n${state.result.throwable.message}}",
+                    color = Color.White
+                ).also { Log.e("Image error", "cannot prompt the image", state.result.throwable) }
                 is AsyncImagePainter.State.Loading -> CircularProgressIndicator(modifier = Modifier.padding(46.dp))
                 is AsyncImagePainter.State.Success -> SubcomposeAsyncImageContent()
             }
@@ -125,8 +129,6 @@ fun ItemGrid(
                     .width(arrangementWidth.dp)
                     .pointerInput(Unit) {
                         detectTapGestures(
-                            onPress = { println("onPress(${item.id})") },
-                            onDoubleTap = { println("onDoubleTap(${item.id})") },
                             onLongPress = { onItemLongPressed(item) },
                             onTap = { onItemSelected(item) }
                         )
